@@ -1,0 +1,22 @@
+body
+{
+  background: #ff6666;
+  color: #000000;
+  margin-top: 5rem;
+}
+
+.nb-colour
+{
+  background-color: #000000;
+  color: #ffffff;
+}
+
+.site-header .navbar-nav .nav-link
+{
+  color: #ffffff;
+}
+
+.header_colour
+{
+    background-color: blue;
+}

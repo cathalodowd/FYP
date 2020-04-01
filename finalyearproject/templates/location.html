@@ -1,0 +1,107 @@
+{% extends "layout.html" %}
+{% block content %}
+<body>
+    <div class="container">
+        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?v=3"></script>
+        <h1>Day: {{icons[0][6]}}</h1>
+        <div id="map_div" style="height: 400px;"></div>
+
+        <div id="accordion" class="mt-5">
+            <div class="card">
+              <div class="card-header">
+                <a class="card-link" data-toggle="collapse" href="#collapseOne">
+                  Details Of Course Modules
+                </a>
+              </div>
+              <div id="collapseOne" class="collapse show" data-parent="#accordion">
+                <div class="card-body">
+                    <table class="table">
+                      <thead class="header_colour">
+                        <tr>
+                          <th scope="col">#</th>
+                          <th scope="col">Venue</th>
+                          <th scope="col">Course Code</th>
+                          <th scope="col">Room Capacity</th>
+                          <th scope="col">Floor Level</th>
+                          <th scope="col">Time</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                      {% for icon in icons %}
+                        <tr>
+                          <th scope="row">{{loop.index}}</th>
+                          <td>{{icon[0]}}</td>
+                          <td>{{icon[1]}}</td>
+                          <td>{{icon[4]}}</td>
+                          <td>{{icon[5]}}</td>
+                          <td>{{icon[7]}}</td>
+                        </tr>
+                      {% endfor %}
+                      </tbody>
+                    </table>
+                </div>
+              </div>
+            </div>
+            </div>
+
+
+</div>
+<script>
+    var map;
+    var locationIcons = [];
+    var locations = {{ icons | safe }};
+
+    for(var i = 0; i < locations.length; i++)
+    {
+        locationIcons.push([locations[i][0], locations[i][1], parseFloat(locations[i][2]), parseFloat(locations[i][3]), locations[i][8]]);
+    }
+
+    google.maps.event.addDomListener(window, "load", function () {
+
+
+    var map = new google.maps.Map(document.getElementById("map_div"), {
+        mapTypeId: google.maps.MapTypeId.ROADMAP,
+    });
+
+
+    var infoWindow = new google.maps.InfoWindow();
+
+    var bounds = new google.maps.LatLngBounds();
+
+
+    function createMarker(options, html) {
+        var marker = new google.maps.Marker(options);
+        bounds.extend(options.position);
+        if (html) {
+            google.maps.event.addListener(marker, "click", function () {
+                infoWindow.setContent(html);
+                infoWindow.open(options.map, this);
+                map.setZoom(map.getZoom() + 1)
+                map.setCenter(marker.getPosition());
+            });
+        }
+        return marker;
+    }
+
+
+    for (var i = 0; i < locationIcons.length; i++) {
+        var point = locationIcons[i];
+        createMarker({
+            position: new google.maps.LatLng(point[2], point[3]),
+            map: map,
+            icon: {
+                path: 'M 0,0 C -2,-20 -10,-22 -10,-30 A 10,10 0 1,1 10,-30 C 10,-22 2,-20 0,0 z M -2,-30 a 2,2 0 1,1 4,0 2,2 0 1,1 -4,0',
+                scale: 1,
+                strokeWeight: 0.2,
+                strokeColor: 'black',
+                strokeOpacity: 1,
+                fillColor: point[4],
+                fillOpacity: 0.85,
+            },
+        }, point[1]);
+    };
+    map.fitBounds(bounds);
+});
+</script>
+</body>
+{% endblock %}
